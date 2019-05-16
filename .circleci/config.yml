@@ -39,7 +39,7 @@ workflows:
       - build:
           filters:
             branches:
-              only: staging
+              only: master
       - build_dev:
           filters:
             branches:
