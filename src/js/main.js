@@ -45,6 +45,7 @@ function buildTimes() {
 \*----------------------------------------------------------------------*/
 function setSelectedTrain(destination) {
   selectedTrain = destination;
+  processBART();
 }
 /*----------------------------------------------------------------------*\
     Bart Station
