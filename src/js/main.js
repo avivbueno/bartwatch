@@ -114,29 +114,39 @@ function showStationInfo(station) {
 /*----------------------------------------------------------------------*\
     Bart Estimated
 \*----------------------------------------------------------------------*/
+var store = Redux.createStore(bartUpdate);
+function bartUpdate(state = { apiData: {} }, action) {
+  switch (action.type) {
+    case "BART_DATA_UPDATE":
+      if (state.apiData === undefined) {
+        return state;
+      }
+      state.apiData = action.apiData;
+      return state;
+    default:
+      return state;
+  }
+}
+store.subscribe(processBART);
+store.subscribe(updateClock);
 function getBART() {
   $.get(
     BART_API_URI +
       "etd.aspx?cmd=etd&orig=ALL&key=" +
       BART_API_KEY +
       "&callback=?",
-    saveBartData
+    function callback(data) {
+      store.dispatch({
+        type: "BART_DATA_UPDATE",
+        apiData: $.xml2json(data)
+      });
+    }
   );
 }
-function saveBartData(xml) {
-  if (typeof Storage !== "undefined") {
-    // Code for localStorage/sessionStorage.
-    localStorage.setItem("bart_data", JSON.stringify($.xml2json(xml)));
-  } else {
-    alert(
-      "Browser dosn't support some of the technolgy required for this application, you are redirected to Google"
-    );
-    location = "https://www.google.com";
-  }
-}
+
 function processBART() {
   // Parse XML
-  var data = JSON.parse(localStorage.getItem("bart_data"));
+  var data = store.getState().apiData;
   if (lastProcTime < data.time) {
     playSampler(bart_sound.WOOSH);
   }
@@ -156,7 +166,8 @@ function processBART() {
 
 function computeLiveTrains(data, trains) {
   var debug = "";
-  if (data == undefined) return;
+  if (data === undefined || data === {} || data.station.forEach === undefined)
+    return;
   data.station.forEach(function(station) {
     if (showingStation == station.abbr) {
       showStationInfo(station);
@@ -384,8 +395,7 @@ function setupMap() {
   var layer = new L.TileLayer(
     "https://mt1.google.com/vt/lyrs=m@121,transit|vm:1&hl=en&opts=r&x={x}&y={y}&z={z}",
     {
-      attribution: "Map data &copy;2019 Google",
-      maxZoom: 10
+      attribution: "Map data &copy;2019 Google"
     }
   );
   var sf = new L.LatLng(37.735, -122.1);
@@ -560,8 +570,6 @@ $(document).ready(function() {
   setupMap();
   buildTimes();
   getBART();
-  setInterval(updateClock, 1000);
   setInterval(getBART, REFRESH_FREQ);
-  setInterval(moveTrains, 1000);
-  setInterval(processBART, 1000);
+  setInterval(moveTrains, 100);
 });
