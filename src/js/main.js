@@ -115,21 +115,11 @@ function showStationInfo(station) {
 /*----------------------------------------------------------------------*\
     Bart Estimated
 \*----------------------------------------------------------------------*/
-var store = Redux.createStore(bartUpdate);
-function bartUpdate(state = { apiData: {} }, action) {
-  switch (action.type) {
-    case "BART_DATA_UPDATE":
-      if (state.apiData === undefined) {
-        return state;
-      }
-      state.apiData = action.apiData;
-      return state;
-    default:
-      return state;
-  }
-}
+//Connecting the UI functions to the redux store
 store.subscribe(processBART);
 store.subscribe(updateClock);
+
+//Updating the store from the bart API
 function getBART() {
   $.get(
     BART_API_URI +
