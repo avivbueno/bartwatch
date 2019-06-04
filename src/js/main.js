@@ -1,5 +1,5 @@
+import { setBartState, bartState } from "./data.js";
 //ref: https://leafletjs.com/reference-1.3.4.html#marker
-
 // constants
 var BART_API_URI = "https://api.bart.gov/api/";
 var BART_API_KEY = "MW9S-E7SL-26DU-VV8V";
@@ -116,6 +116,7 @@ function showStationInfo(station) {
     Bart Estimated
 \*----------------------------------------------------------------------*/
 //Connecting the UI functions to the redux store
+var store = Redux.createStore(bartState);
 store.subscribe(processBART);
 store.subscribe(updateClock);
 
@@ -128,7 +129,7 @@ function getBART() {
       "&callback=?",
     function callback(data) {
       store.dispatch({
-        type: "BART_DATA_UPDATE",
+        type: "UPDATE_BART_DATA",
         apiData: $.xml2json(data)
       });
     }
@@ -137,7 +138,7 @@ function getBART() {
 
 function processBART() {
   // Parse XML
-  var data = store.getState().apiData;
+  var data = store.getState().state;
   if (lastProcTime < data.time) {
     playSampler(bart_sound.WOOSH);
   }
