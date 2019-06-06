@@ -1,4 +1,11 @@
-import { setBartState, bartState } from "./data.js";
+import { bartState } from "./data.js";
+import { stations } from "./stations.js";
+import { routes } from "./routes.js";
+import { asArray, secondsToMins, toInt } from "./utils.js";
+import { links } from "./links.js";
+import { playSampler, toggleSound, bart_sound } from "./audio.js";
+import "./vendor/jquery.xml2json.js";
+
 //ref: https://leafletjs.com/reference-1.3.4.html#marker
 // constants
 var BART_API_URI = "https://api.bart.gov/api/";
@@ -22,6 +29,18 @@ var selectedTrain = "all";
 var debugMode = false;
 var debugText = "";
 
+//UI Script for mute button
+document.getElementById("mutebtn").addEventListener("click", myFunction);
+
+function myFunction() {
+  var content = document.getElementById("mutebtn").innerHTML;
+  if (content == "Unmute") {
+    document.getElementById("mutebtn").innerHTML = "Mute";
+  } else {
+    document.getElementById("mutebtn").innerHTML = "Unmute";
+  }
+  toggleSound();
+}
 /*----------------------------------------------------------------------*\
     Setup
 \*----------------------------------------------------------------------*/
@@ -138,7 +157,7 @@ function getBART() {
 
 function processBART() {
   // Parse XML
-  var data = store.getState().state;
+  var data = store.getState().apiData;
   if (lastProcTime < data.time) {
     playSampler(bart_sound.WOOSH);
   }

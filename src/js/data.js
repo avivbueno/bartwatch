@@ -29,7 +29,7 @@ export function setBartState(state) {
 // ============================================================================
 // Reducer
 // ============================================================================
-export default function bartState(state = initState, action) {
+export function bartState(state = initState, action) {
   const payload = action.apiData;
 
   switch (action.type) {
