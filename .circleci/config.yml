@@ -23,6 +23,10 @@ jobs:
     steps:
       - checkout
       - run: 
+          name: Installing dependencies
+          command: |
+            npm install
+      - run: 
           name: Building the codebase
           command: |
             cd scripts 
