@@ -1,7 +1,6 @@
 # BARTWATCH
-[![CircleCI](https://circleci.com/gh/avivbueno/bartwatch/tree/dev.svg?style=svg)](https://circleci.com/gh/avivbueno/bartwatch/tree/dev)
 BARTWATCH is a way to watch BART and hear some music created from it's moves. :)
-
+Build Status: [![CircleCI](https://circleci.com/gh/avivbueno/bartwatch/tree/dev.svg?style=svg)](https://circleci.com/gh/avivbueno/bartwatch/tree/dev)
 ## Credits
 Aviv Bueno
 Elad Gariany
