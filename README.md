@@ -1,23 +1,11 @@
-# WhereisBART.com
-
-Whereisbart.com is a live visualization of the estimated positions of all BART ([Bay Area Rapid Transit](https://bart.gov)) trains.
-The positions are estimated using realtime arrival predictions from the [BART API](https://www.bart.gov/schedules/developers/api.aspx).
-The estimated travel time between all stations was determined and trains are plotted on a map.
-The map assumes normal operating conditions - any delays in the BART system will cause the estimated positions on the map to be inaccurate.
-
-The map layer is the [Google Transit layer](https://blinktag.com/google-transit-layer-through-google-maps-api/).
-
-The data is queried every 5 seconds and refreshed as needed.
-
-## Live Site
-
-A live version of this code is at [https://whereisbart.com](https://whereisbart.com)
-
-## Source Code
-The source code is available on [github](https://github.com/brendannee/whereisbart.com).
+# BARTWATCH
+[![CircleCI](https://circleci.com/gh/avivbueno/bartwatch/tree/dev.svg?style=svg)](https://circleci.com/gh/avivbueno/bartwatch/tree/dev)
+BARTWATCH is a way to watch BART and hear some music created from it's moves. :)
 
 ## Credits
-
+Aviv Bueno
+Elad Gariany
+Forked from:
 Brendan Nee  me@bn.ee
 Jedidiah Horne jedidiah.horne@gmail.com
 Salva Maiorano salva.bart@maiorano.club
