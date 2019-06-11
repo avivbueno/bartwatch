@@ -2,8 +2,8 @@
 BARTWATCH is a way to watch BART and hear some music created from it's moves. :)
 Build Status: [![CircleCI](https://circleci.com/gh/avivbueno/bartwatch/tree/dev.svg?style=svg)](https://circleci.com/gh/avivbueno/bartwatch/tree/dev)
 ## Credits
-Aviv Bueno
-Elad Gariany
+Aviv Bueno,
+Elad Gariany,
 Forked from:
 Brendan Nee  me@bn.ee
 Jedidiah Horne jedidiah.horne@gmail.com
