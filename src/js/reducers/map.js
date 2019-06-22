@@ -9,7 +9,7 @@ const mapStyleDefault = {
 const map = (state = mapStyleDefault, action) => {
   switch (action.type) {
     case "SET_MAP_SIZE":
-      return { ...state, size: action.size };
+      return { ...state, size: Object.assign(state.size, action.size) };
     case "SET_MAP_TYPE":
       return { ...state, mapType: action.mapType };
     case "ADD_MAP_LAYER":
