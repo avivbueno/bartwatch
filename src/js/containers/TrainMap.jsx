@@ -25,7 +25,6 @@ class TrainMap extends Component {
     }
   }
   loadStations() {
-    const { stationsReady } = this.state;
     const { stations, dispatch } = this.props;
 
     let stationsLayers = [];
