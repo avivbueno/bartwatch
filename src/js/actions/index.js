@@ -36,3 +36,21 @@ export const fetchStations = () => dispatch => {
     .then(response => response.json())
     .then(json => dispatch(receiveStations(json)));
 };
+
+export const requestEstimates = () => ({
+  type: "REQUEST_ESTIMATES"
+});
+export const receiveEstimates = estimates => ({
+  type: "RECEIVE_ESTIMATES",
+  estimates: estimates.root.station,
+  lastUpdatedTime: estimates.root.time,
+  lastUpdatedDate: estimates.root.date
+});
+export const fetchEstimates = () => dispatch => {
+  dispatch(requestEstimates());
+  fetch(
+    "https://api.bart.gov/api/etd.aspx?cmd=etd&orig=ALL&key=MW9S-E7SL-26DU-VV8V&json=y"
+  )
+    .then(response => response.json())
+    .then(json => dispatch(receiveEstimates(json)));
+};
