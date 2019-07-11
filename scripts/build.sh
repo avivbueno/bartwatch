@@ -2,7 +2,7 @@
 
 # ============================  Script Variables   ============================
 SOURCE_FOLDER="../src"
-PUBLIC_FOLDER="../public"
+PUBLIC_FOLDER="../dist"
 
 # =============================================================================
 
@@ -23,11 +23,8 @@ log "===========================================================================
 log ">> Removing prev. build."
 rm -rf $PUBLIC_FOLDER
 
-log ">> Creating build folder."
-mkdir -p $PUBLIC_FOLDER
-
-log ">> building bart.gariany.com"
-cp -R $SOURCE_FOLDER/* $PUBLIC_FOLDER/
+log ">> Building bartwatch"
+npm run build
 
 log "================================================================================"
 log ">> Done!"

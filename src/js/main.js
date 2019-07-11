@@ -1,5 +1,12 @@
-//ref: https://leafletjs.com/reference-1.3.4.html#marker
+import { bartState } from "./data.js";
+import { stations } from "./stations.js";
+import { routes } from "./routes.js";
+import { asArray, secondsToMins, toInt } from "./utils.js";
+import { links } from "./links.js";
+import { playSampler, toggleSound, bart_sound } from "./audio.js";
+import "./vendor/jquery.xml2json.js";
 
+//ref: https://leafletjs.com/reference-1.3.4.html#marker
 // constants
 var BART_API_URI = "https://api.bart.gov/api/";
 var BART_API_KEY = "MW9S-E7SL-26DU-VV8V";
@@ -22,6 +29,18 @@ var selectedTrain = "all";
 var debugMode = false;
 var debugText = "";
 
+//UI Script for mute button
+document.getElementById("mutebtn").addEventListener("click", myFunction);
+
+function myFunction() {
+  var content = document.getElementById("mutebtn").innerHTML;
+  if (content == "Unmute") {
+    document.getElementById("mutebtn").innerHTML = "Mute";
+  } else {
+    document.getElementById("mutebtn").innerHTML = "Unmute";
+  }
+  toggleSound();
+}
 /*----------------------------------------------------------------------*\
     Setup
 \*----------------------------------------------------------------------*/
@@ -45,6 +64,7 @@ function buildTimes() {
 \*----------------------------------------------------------------------*/
 function setSelectedTrain(destination) {
   selectedTrain = destination;
+  processBART();
 }
 /*----------------------------------------------------------------------*\
     Bart Station
@@ -114,29 +134,30 @@ function showStationInfo(station) {
 /*----------------------------------------------------------------------*\
     Bart Estimated
 \*----------------------------------------------------------------------*/
+//Connecting the UI functions to the redux store
+var store = Redux.createStore(bartState);
+store.subscribe(processBART);
+store.subscribe(updateClock);
+
+//Updating the store from the bart API
 function getBART() {
   $.get(
     BART_API_URI +
       "etd.aspx?cmd=etd&orig=ALL&key=" +
       BART_API_KEY +
       "&callback=?",
-    saveBartData
+    function callback(data) {
+      store.dispatch({
+        type: "UPDATE_BART_DATA",
+        apiData: $.xml2json(data)
+      });
+    }
   );
 }
-function saveBartData(xml) {
-  if (typeof Storage !== "undefined") {
-    // Code for localStorage/sessionStorage.
-    localStorage.setItem("bart_data", JSON.stringify($.xml2json(xml)));
-  } else {
-    alert(
-      "Browser dosn't support some of the technolgy required for this application, you are redirected to Google"
-    );
-    location = "https://www.google.com";
-  }
-}
+
 function processBART() {
   // Parse XML
-  var data = JSON.parse(localStorage.getItem("bart_data"));
+  var data = store.getState().apiData;
   if (lastProcTime < data.time) {
     playSampler(bart_sound.WOOSH);
   }
@@ -156,7 +177,8 @@ function processBART() {
 
 function computeLiveTrains(data, trains) {
   var debug = "";
-  if (data == undefined) return;
+  if (data === undefined || data === {} || data.station.forEach === undefined)
+    return;
   data.station.forEach(function(station) {
     if (showingStation == station.abbr) {
       showStationInfo(station);
@@ -384,8 +406,7 @@ function setupMap() {
   var layer = new L.TileLayer(
     "https://mt1.google.com/vt/lyrs=m@121,transit|vm:1&hl=en&opts=r&x={x}&y={y}&z={z}",
     {
-      attribution: "Map data &copy;2019 Google",
-      maxZoom: 10
+      attribution: "Map data &copy;2019 Google"
     }
   );
   var sf = new L.LatLng(37.735, -122.1);
@@ -560,8 +581,6 @@ $(document).ready(function() {
   setupMap();
   buildTimes();
   getBART();
-  setInterval(updateClock, 1000);
   setInterval(getBART, REFRESH_FREQ);
-  setInterval(moveTrains, 1000);
-  setInterval(processBART, 1000);
+  setInterval(moveTrains, 100);
 });

@@ -19,9 +19,13 @@ jobs:
   build_dev:
     description: our build and deploy job for the website dev environment
     docker:
-      - image: brentley/awscli
+      - image: chybie/node-aws-cli
     steps:
       - checkout
+      - run: 
+          name: Installing dependencies
+          command: |
+            npm install
       - run: 
           name: Building the codebase
           command: |
