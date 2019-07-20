@@ -1,11 +1,12 @@
 import L from "leaflet";
-import { Component } from "react";
 class Station extends L.Marker {
-  constructor(stationData, clickCallback, creatorObj) {
+  constructor(stationData) {
     super(new L.LatLng(stationData.gtfs_latitude, stationData.gtfs_longitude), {
       icon: L.divIcon({
         className: "station-icon",
-        iconSize: [9, 9]
+        iconSize: [12, 12],
+        iconColor: "blue",
+        icon: {}
       })
     });
     this.popup = L.popup().setContent(
@@ -13,11 +14,10 @@ class Station extends L.Marker {
     );
     this.bindPopup(this.popup);
     this.data = stationData;
-    if (creatorObj instanceof Component) {
-      this.creatorObj = creatorObj;
-    }
-    if (clickCallback instanceof Function) {
-      this.on("click", clickCallback);
+  }
+  setColor(color) {
+    if (color != "non") {
+      console.log(color);
     }
   }
 }

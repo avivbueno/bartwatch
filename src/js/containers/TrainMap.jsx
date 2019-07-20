@@ -1,10 +1,15 @@
 import React, { Component } from "react";
+//REDUX
 import { connect } from "react-redux";
-import _ from "lodash";
-import Map from "../components/Map.jsx";
+import { subscribe } from "redux-subscriber";
 import { fetchStations, fetchEstimates, addMapLayers } from "../actions";
-import Station from "../components/Station.jsx";
+//UTILS
+import _ from "lodash";
 import { toInt } from "../utils.js";
+//COMPONENTS/CLASSES
+import Map from "../components/Map.jsx";
+import Station from "../components/Station.jsx";
+//MEDIA
 import bike from "../../bike.svg";
 class TrainMap extends Component {
   constructor(props) {
@@ -38,7 +43,7 @@ class TrainMap extends Component {
   }
   loadStations() {
     const { stations, dispatch } = this.props;
-
+    let unsubscribeFromStationDataChange = [];
     //Creating a new list of station layers to send to the store
     let stationsLayers = [];
 
@@ -46,10 +51,26 @@ class TrainMap extends Component {
     const trainMapObj = this;
     //Creating a ref for station click event handler
     const stationOnClickRef = this.stationOnClick;
+
+    const renderEstimatesForStation = this.renderEstimatesForStation;
     stations.items.map(function(station) {
       //Creating a new station layer object and passing it the station data, a function for onclick event callback and a ref
       //to the current object to access current app state (can't connect because its not a component)
-      const stationLayer = new Station(station, stationOnClickRef, trainMapObj);
+      const stationLayer = new Station(station);
+      const unsubscribe = subscribe("estimates.estimates", state => {
+        const estimatesOfStation = _.find(state.estimates.estimates, [
+          "abbr",
+          stationLayer.data.abbr
+        ]);
+        const stationPopupView = renderEstimatesForStation(estimatesOfStation);
+        if (stationPopupView == "") {
+          stationPopupView = "Station: <b>" + estimatesOfStation.name + "</b>";
+        }
+        //updating popup content with new estimates view
+        stationLayer.setPopupContent(stationPopupView[0]);
+        stationLayer.setColor(stationPopupView[1]);
+      });
+      unsubscribeFromStationDataChange[station.abbr] = unsubscribe;
       stationsLayers.push(stationLayer);
     });
     //Dispatching the layer list created to the store for the map update
@@ -58,22 +79,14 @@ class TrainMap extends Component {
     //Letting the state know that the station load already has been done
     this.state.stationsReady = true;
   }
-  stationOnClick(event) {
-    //Getting the station layer that called this event handler
-    const stationLayer = event.target;
 
-    //Getting the estimates from the state for this station (by station abbr)
-    const estimatesOfStation = _.find(
-      stationLayer.creatorObj.props.estimates.estimates,
-      ["abbr", stationLayer.data.abbr]
-    );
-    //Checking if there is any estimates for the station
+  renderEstimatesForStation(estimatesOfStation) {
     if (estimatesOfStation !== undefined) {
       //OLD CODE: DIDN'T CHANGE
       let platforms = [];
       estimatesOfStation.etd.map(function(destination) {
         destination.estimate.map(function(estimate) {
-          var plat = estimate.platform;
+          let plat = estimate.platform;
           if (!platforms[plat]) {
             platforms[plat] = {
               dir: estimate.direction,
@@ -91,10 +104,11 @@ class TrainMap extends Component {
           });
         });
       });
-      var stationInfo = "Station: <b>" + estimatesOfStation.name + "</b>";
+      let trainColorInStation = "non";
+      let stationInfoView = "Station: <b>" + estimatesOfStation.name + "</b>";
       platforms.map(function(platform, platId) {
         platform.trains.sort((a, b) => toInt(a.mins) - toInt(b.mins));
-        stationInfo += "<br>Platform " + platId + ": " + platform.dir;
+        stationInfoView += "<br>Platform " + platId + ": " + platform.dir;
         platform.trains.forEach(function(train) {
           let bikeSupport = "";
           if (train.bikeFlag) {
@@ -103,12 +117,15 @@ class TrainMap extends Component {
               bike +
               "' />";
           }
-          stationInfo +=
+          if (train.mins.toLowerCase() == "leaving") {
+            trainColorInStation = train.color.toLowerCase();
+          }
+          stationInfoView +=
             "<br> <img class='bart-bullet' style='background:" +
             train.hexColor +
             "'/>" +
             train.mins +
-            " min -- " +
+            (train.mins != "Leaving" ? " min -- " : " -- ") +
             train.dest +
             " (" +
             bikeSupport +
@@ -116,12 +133,12 @@ class TrainMap extends Component {
             train.color.toLowerCase() +
             ")";
         });
-        stationInfo += "<br>";
+        stationInfoView += "<br>";
       });
-
       //Set the new content of the station popup
-      stationLayer.setPopupContent(stationInfo);
+      return [stationInfoView, trainColorInStation];
     }
+    return ["", "non"];
   }
   render() {
     const { isFetching } = this.props.stations;
