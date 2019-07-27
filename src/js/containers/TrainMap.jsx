@@ -63,12 +63,11 @@ class TrainMap extends Component {
           stationLayer.data.abbr
         ]);
         const stationPopupView = renderEstimatesForStation(estimatesOfStation);
-        if (stationPopupView == "") {
-          stationPopupView = "Station: <b>" + estimatesOfStation.name + "</b>";
-        }
         //updating popup content with new estimates view
-        stationLayer.setPopupContent(stationPopupView[0]);
-        stationLayer.setColor(stationPopupView[1]);
+        if (stationPopupView[0] != "") {
+          stationLayer.setPopupContent(stationPopupView[0]);
+          stationLayer.setColor(stationPopupView[1]);
+        }
       });
       unsubscribeFromStationDataChange[station.abbr] = unsubscribe;
       stationsLayers.push(stationLayer);
