@@ -15,10 +15,5 @@ class Station extends L.Marker {
     this.bindPopup(this.popup);
     this.data = stationData;
   }
-  setColor(color) {
-    if (color != "non") {
-      console.log(color);
-    }
-  }
 }
 export default Station;

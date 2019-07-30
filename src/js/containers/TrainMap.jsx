@@ -47,11 +47,6 @@ class TrainMap extends Component {
     //Creating a new list of station layers to send to the store
     let stationsLayers = [];
 
-    //Creating a ref for the current object to access state in functions of the station layer
-    const trainMapObj = this;
-    //Creating a ref for station click event handler
-    const stationOnClickRef = this.stationOnClick;
-
     const renderEstimatesForStation = this.renderEstimatesForStation;
     stations.items.map(function(station) {
       //Creating a new station layer object and passing it the station data, a function for onclick event callback and a ref
@@ -66,7 +61,7 @@ class TrainMap extends Component {
         //updating popup content with new estimates view
         if (stationPopupView[0] != "") {
           stationLayer.setPopupContent(stationPopupView[0]);
-          stationLayer.setColor(stationPopupView[1]);
+          //stationLayer.setColor(stationPopupView[1]);
         }
       });
       unsubscribeFromStationDataChange[station.abbr] = unsubscribe;
