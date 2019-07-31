@@ -1,14 +1,10 @@
-export var bart_sound = {
-  HIGH_DING: "C3",
-  LOW_DING: "D3",
-  WOOSH: "E3"
-};
-var sampler = undefined;
-function initSampler() {
+import Tone from "tone";
+let sampler = undefined;
+export function initSampler() {
   sampler = new Tone.Sampler({
-    C3: "./audio/high-ding.mp3",
-    D3: "./audio/low-ding.mp3",
-    E3: "./audio/woosh.mp3"
+    C3: "../audio/high-ding.mp3",
+    D3: "../audio/low-ding.mp3",
+    E3: "../audio/woosh.mp3"
   }).toMaster();
 }
 export function toggleSound() {
