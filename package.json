@@ -50,6 +50,7 @@
     "lodash": "^4.17.15",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "redux-subscriber": "^1.1.0"
+    "redux-subscriber": "^1.1.0",
+    "tone": "^13.4.9"
   }
 }

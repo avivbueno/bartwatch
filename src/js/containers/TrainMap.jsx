@@ -73,9 +73,10 @@ class TrainMap extends Component {
             //Here we can make sounds for each train arriving to the station (for each color)
             switch (color) {
               case "yellow":
-                playSampler(bartSound.HIGH_DING);
+                playSampler(bartSound.LOW_DING);
                 break;
               case "blue":
+                playSampler(bartSound.HIGH_DING);
                 break;
             }
           }
