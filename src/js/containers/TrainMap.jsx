@@ -6,13 +6,13 @@ import { fetchStations, fetchEstimates, addMapLayers } from "../actions";
 //UTILS
 import _ from "lodash";
 import { toInt } from "../utils.js";
-import { playSampler, initSampler } from "../audio.js";
+import { playSampler, initSampler } from "../audio";
 //COMPONENTS/CLASSES
 import Map from "../components/Map.jsx";
 import Station from "../components/Station.jsx";
 //MEDIA
 import bike from "../../bike.svg";
-//Enums
+//ENUMS
 import { bartSound } from "../enums";
 class TrainMap extends Component {
   constructor(props) {
@@ -35,7 +35,6 @@ class TrainMap extends Component {
       this.dispatch(fetchEstimates());
     }, 5000);
 
-    //Sampler for train sounds
     initSampler();
   }
   componentDidUpdate() {
@@ -64,12 +63,15 @@ class TrainMap extends Component {
           stationLayer.data.abbr
         ]);
         const stationPopupView = renderEstimatesForStation(estimatesOfStation);
+        const currentContent = stationLayer.getPopup().getContent();
+        const dataChanged = currentContent != stationPopupView[0];
         //updating popup content with new estimates view
         if (stationPopupView[0] != "") {
           stationLayer.setPopupContent(stationPopupView[0]);
           //stationLayer.setColor(stationPopupView[1]);
           const color = stationPopupView[1];
-          if (color != "non") {
+          if (color != "non" && dataChanged) {
+            console.log(color + "-" + currentContent);
             //Here we can make sounds for each train arriving to the station (for each color)
             switch (color) {
               case "yellow":

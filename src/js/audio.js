@@ -1,5 +1,10 @@
 import Tone from "tone";
-let sampler = undefined;
+export var bart_sound = {
+  HIGH_DING: "C3",
+  LOW_DING: "D3",
+  WOOSH: "E3"
+};
+var sampler = undefined;
 export function initSampler() {
   sampler = new Tone.Sampler({
     C3: "../audio/high-ding.mp3",
