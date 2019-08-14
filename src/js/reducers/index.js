@@ -1,8 +1,10 @@
 import { combineReducers } from "redux";
-import liveTrains from "./liveTrains.js";
+import estimates from "./estimates.js";
 import map from "./map.js";
+import stations from "./stations.js";
 
 export default combineReducers({
-  liveTrains,
-  map
+  estimates,
+  map,
+  stations
 });

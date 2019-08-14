@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React, { PureComponent } from "react";
 import L from "leaflet";
 import PropTypes from "prop-types";
 
-class Map extends Component {
+class Map extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -26,6 +26,32 @@ class Map extends Component {
     if (this.props.map.mapType != prevProps.mapType) {
       this.setupMapTilesLayer();
     }
+
+    //Map marker layers update
+    if (this.props.map.layers != prevProps.map.layers) {
+      this.loadMarkerLayers();
+    }
+  }
+
+  loadMarkerLayers() {
+    //Get leaflet map object from state
+    const map = this.state.map;
+    //Get new layers from props
+    const layers = this.props.map.layers;
+
+    //Remove all previous marker layers
+    map.eachLayer(function(layer) {
+      if (layer instanceof L.Marker) {
+        map.removeLayer(layer);
+      }
+    });
+
+    //Add all new markers layers
+    layers.map(function(layer) {
+      if (layer instanceof L.Marker) {
+        map.addLayer(layer);
+      }
+    });
   }
 
   setupMap() {
@@ -37,9 +63,8 @@ class Map extends Component {
     var sf = new L.LatLng(37.735, -122.15);
     this.state.map.setView(sf, 11);
 
-    //drawStations();
+    //this.drawStations();
   }
-
   setupMapTilesLayer() {
     //Getting map style data from the props
     let map = this.props.map;
@@ -87,10 +112,13 @@ class Map extends Component {
 Map.propTypes = {
   map: PropTypes.shape({
     size: PropTypes.shape({
-      height: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      height: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+        .isRequired,
       width: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    }),
-    mapType: PropTypes.string
+        .isRequired
+    }).isRequired,
+    mapType: PropTypes.string.isRequired,
+    layers: PropTypes.array
   })
 };
 
