@@ -36,6 +36,12 @@ a:hover {
 #header .logo img {
   border: 0;
 }
+.bart-bullet {
+  height: 10px;
+  width: 10px;
+  margin: 1px;
+  border-radius: 50%;
+}
 .bart-train {
   clear: both;
   height: 30px;
