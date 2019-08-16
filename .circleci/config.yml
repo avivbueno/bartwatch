@@ -3,7 +3,7 @@ jobs:
   build:
     description: our build and deploy job for the website
     docker:
-      - image: brentley/awscli
+      - image: chybie/node-aws-cli
     steps:
       - checkout
       - run: 
